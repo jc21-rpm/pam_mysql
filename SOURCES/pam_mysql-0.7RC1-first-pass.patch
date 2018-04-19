@@ -1,0 +1,41 @@
+--- pam_mysql-0.7RC1/pam_mysql.c~	2008-10-01 10:01:48.000000000 -0700
++++ pam_mysql-0.7RC1/pam_mysql.c	2008-10-01 16:07:07.000000000 -0700
+@@ -3353,7 +3353,7 @@
+ 
+ 			case PAM_NO_MODULE_DATA:
+ 				passwd = NULL;
+-				break;
++				goto askpass;
+ 
+ 			default:
+ 				retval = PAM_AUTH_ERR;
+@@ -3419,6 +3419,7 @@
+ 		}
+ 	}
+ 
++askpass:
+ 	switch (pam_mysql_converse(ctx, &resps, pamh, 1,
+ 			PAM_PROMPT_ECHO_OFF, PLEASE_ENTER_PASSWORD)) {
+ 		case PAM_MYSQL_ERR_SUCCESS:
+@@ -3446,6 +3447,10 @@
+ 		goto out;
+ 	}
+ 
++	if (passwd_is_local) {
++		(void) pam_set_item(pamh, PAM_AUTHTOK, passwd);
++	}
++
+ 	switch (pam_mysql_open_db(ctx)) {
+ 		case PAM_MYSQL_ERR_BUSY:
+ 		case PAM_MYSQL_ERR_SUCCESS:
+@@ -3464,10 +3469,6 @@
+ 			goto out;
+ 	}
+ 
+-	if (passwd_is_local) {
+-		(void) pam_set_item(pamh, PAM_AUTHTOK, passwd);
+-	}
+-
+ 	err = pam_mysql_check_passwd(ctx, user, passwd,
+ 			!(flags & PAM_DISALLOW_NULL_AUTHTOK));
+ 

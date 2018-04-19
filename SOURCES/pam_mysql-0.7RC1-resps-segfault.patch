@@ -1,0 +1,11 @@
+--- pam_mysql-0.7RC1/pam_mysql.c	2006-01-09 02:35:59.000000000 -0800
++++ pam_mysql-0.7RC1.new/pam_mysql.c	2007-09-11 10:59:47.494608680 -0700
+@@ -3205,7 +3205,7 @@
+ 	}
+ 
+ 	for (i = 0; i < nargs; i++) {
+-		if (resps[i].resp != NULL &&
++		if (resps != NULL && resps[i].resp != NULL &&
+ 				NULL == (retval[i] = xstrdup(resps[i].resp))) {
+ 			syslog(LOG_AUTHPRIV | LOG_CRIT, PAM_MYSQL_LOG_PREFIX "allocation failure at " __FILE__ ":%d", __LINE__);
+ 			err = PAM_MYSQL_ERR_ALLOC;
