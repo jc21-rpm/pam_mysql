@@ -96,4 +96,12 @@ done
   triggers {
     bitbucketPush()
   }
+  post {
+    success {
+      slackSend color: "good", message: "<${BUILD_URL}|${JOB_NAME}> build #${BUILD_NUMBER} completed"
+    }
+    failure {
+      slackSend color: "bad", message: "<${BUILD_URL}|${JOB_NAME}> build #${BUILD_NUMBER} failed"
+    }
+  }
 }
