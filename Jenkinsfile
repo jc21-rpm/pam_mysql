@@ -9,18 +9,18 @@ docker pull docker-registry.jc21.net.au/ci-tools:latest'''
     }
     stage('Build') {
       steps {
-        sh '''printenv
-
-CWD=`pwd`
+        sh '''CWD=`pwd`
 PACKAGE=pam_mysql
 DOCKER_IMAGE=docker-registry.jc21.net.au/rpmbuild:el7
 BUILD_SPEC_ARGS=
 
-mkdir RPMS && chmod -R 777 RPMS
+mkdir -p RPMS && chmod -R 777 RPMS
+mkdir -p SRPMS && chmod -R 777 SRPMS
 
 CMD="docker run --rm \\
   --name rpmbuild-$BUILD_TAG \\
   -v $CWD/RPMS:/home/rpmbuilder/rpmbuild/RPMS \\
+  -v $CWD/SRPMS:/home/rpmbuilder/rpmbuild/SRPMS \\
   -v $CWD/SPECS:/home/rpmbuilder/rpmbuild/SPECS \\
   -v $CWD/SOURCES:/home/rpmbuilder/rpmbuild/SOURCES \\
   $DOCKER_IMAGE \\
@@ -60,6 +60,24 @@ do
   # exit if bad return code
   rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 done
+
+# source rpms
+for RPMFILE in SRPMS/*.src.rpm
+do
+  CMD="docker run --rm \\
+    --name rpmbuild-$BUILD_TAG \\
+    -v $CWD/SRPMS:/data/SRPMS \\
+    -v $CWD/sign:/data/sign \\
+    -v $CWD/sign/.rpmmacros:/root/.rpmmacros \\
+    -v $CWD/sign/.gnupg:/root/.gnupg \\
+    $DOCKER_IMAGE \\
+    /data/sign/addsign.exp /data/$RPMFILE"
+
+  $CMD
+
+  # exit if bad return code
+  rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
+done
 '''
       }
     }
@@ -69,6 +87,9 @@ done
           archiveArtifacts(artifacts: '**/*/*.rpm', caseSensitive: true, onlyIfSuccessful: true)
         }
 
+        dir(path: 'SRPMS') {
+          archiveArtifacts(artifacts: '**/*.src.rpm', caseSensitive: true, onlyIfSuccessful: true, allowEmptyArchive: true)
+        }
       }
     }
   }
