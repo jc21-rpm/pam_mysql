@@ -1,4 +1,8 @@
 pipeline {
+  options {
+    buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '10'))
+    disableConcurrentBuilds()
+  }
   agent any
   stages {
     stage('Prepare') {
@@ -98,10 +102,10 @@ done
   }
   post {
     success {
-      slackSend color: "good", message: "<${BUILD_URL}|${JOB_NAME}> build #${BUILD_NUMBER} completed"
+      slackSend color: "#72c900", message: "SUCCESS: <${BUILD_URL}|${JOB_NAME}> build #${BUILD_NUMBER}"
     }
     failure {
-      slackSend color: "bad", message: "<${BUILD_URL}|${JOB_NAME}> build #${BUILD_NUMBER} failed"
+      slackSend color: "#d61111", message: "FAILED: <${BUILD_URL}|${JOB_NAME}> build #${BUILD_NUMBER}"
     }
   }
 }
