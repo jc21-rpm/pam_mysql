@@ -7,15 +7,14 @@ pipeline {
   stages {
     stage('Prepare') {
       steps {
-        sh '''docker pull docker-registry.jc21.net.au/rpmbuild:el7
-docker pull docker-registry.jc21.net.au/ci-tools:latest'''
+        sh '''docker pull ${DOCKER_RPMBUILD_EL7}
+docker pull ${DOCKER_CI_TOOLS}'''
       }
     }
     stage('Build') {
       steps {
         sh '''CWD=`pwd`
 PACKAGE=pam_mysql
-DOCKER_IMAGE=docker-registry.jc21.net.au/rpmbuild:el7
 BUILD_SPEC_ARGS=
 
 mkdir -p RPMS && chmod -R 777 RPMS
@@ -27,7 +26,7 @@ CMD="docker run --rm \\
   -v $CWD/SRPMS:/home/rpmbuilder/rpmbuild/SRPMS \\
   -v $CWD/SPECS:/home/rpmbuilder/rpmbuild/SPECS \\
   -v $CWD/SOURCES:/home/rpmbuilder/rpmbuild/SOURCES \\
-  $DOCKER_IMAGE \\
+  ${DOCKER_RPMBUILD_EL7} \\
   /bin/build-spec $BUILD_SPEC_ARGS -- /home/rpmbuilder/rpmbuild/SPECS/$PACKAGE.spec"
 
 $CMD
@@ -41,12 +40,11 @@ exit $?'''
 mkdir -p sign
 exit 0'''
         dir(path: 'sign') {
-          git(url: 'ssh://git@stash.jc21.com:7999/rpm/rpm-sign.git', credentialsId: 'stash.jc21.com')
+          git(url: "${RPM_SIGN_GIT_REPO}", credentialsId: "${RPM_SIGN_CREDENTIALS_ID}")
           sh 'chmod 600 .gnupg/*'
         }
 
         sh '''CWD=`pwd`
-DOCKER_IMAGE=docker-registry.jc21.net.au/ci-tools:latest
 
 for RPMFILE in RPMS/*/*.rpm
 do
@@ -56,7 +54,7 @@ do
     -v $CWD/sign:/data/sign \\
     -v $CWD/sign/.rpmmacros:/root/.rpmmacros \\
     -v $CWD/sign/.gnupg:/root/.gnupg \\
-    $DOCKER_IMAGE \\
+    ${DOCKER_CI_TOOLS} \\
     /data/sign/addsign.exp /data/$RPMFILE"
 
   $CMD
@@ -74,7 +72,7 @@ do
     -v $CWD/sign:/data/sign \\
     -v $CWD/sign/.rpmmacros:/root/.rpmmacros \\
     -v $CWD/sign/.gnupg:/root/.gnupg \\
-    $DOCKER_IMAGE \\
+    ${DOCKER_CI_TOOLS} \\
     /data/sign/addsign.exp /data/$RPMFILE"
 
   $CMD
