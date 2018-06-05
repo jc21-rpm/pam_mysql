@@ -100,11 +100,11 @@ done
   }
   post {
     success {
-      slackSend color: "#72c900", message: "SUCCESS: <${BUILD_URL}|${JOB_NAME}> build #${BUILD_NUMBER}"
+      juxtapose event: 'success'
       sh 'figlet "SUCCESS"'
     }
     failure {
-      slackSend color: "#d61111", message: "FAILED: <${BUILD_URL}|${JOB_NAME}> build #${BUILD_NUMBER}"
+      juxtapose event: 'failure'
       sh 'figlet "FAILURE"'
     }
   }
