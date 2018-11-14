@@ -3,7 +3,9 @@ pipeline {
     buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '10'))
     disableConcurrentBuilds()
   }
-  agent any
+  agent {
+    label 'rpm'
+  }
   stages {
     stage('Prepare') {
       steps {
