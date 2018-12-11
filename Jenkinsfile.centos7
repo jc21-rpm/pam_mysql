@@ -9,8 +9,8 @@ pipeline {
   stages {
     stage('Prepare') {
       steps {
-        sh '''docker pull ${DOCKER_RPMBUILD_EL7}
-docker pull ${DOCKER_CI_TOOLS}'''
+        sh 'docker pull ${DOCKER_RPMBUILD_EL7}'
+        sh 'docker pull ${DOCKER_CI_TOOLS}'
       }
     }
     stage('Build') {
