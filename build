@@ -1,6 +1,5 @@
 #!/bin/bash
 
-DOCKER_TAG=latest
 CWD=`pwd`
 CYAN='\E[1;36m'
 RED='\E[1;31m'
@@ -15,6 +14,11 @@ if [ "$CENTOS_VERSION" == "" ]; then
     echo -e "You must specify a Centos version to build for, either 6 or 7"
     echo "ie: ./build 7"
     exit 1
+fi
+
+DOCKER_TAG=$2
+if [ "$CENTOS_VERSION" == "" ]; then
+  DOCKER_TAG=latest
 fi
 
 # Loop over all Specs in the SPECS folder
