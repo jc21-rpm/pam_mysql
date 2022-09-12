@@ -1,7 +1,7 @@
 Summary:	PAM module for auth UNIX users using MySQL data base
 Name:		pam_mysql
 Version:	0.7
-Release:	0.20.rc1%{?dist}
+Release:	0.20.rc1
 Epoch:		1
 License:	GPLv2+
 Group:		System Environment/Base
