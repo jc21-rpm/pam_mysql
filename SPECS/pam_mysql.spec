@@ -1,15 +1,15 @@
-Summary:	PAM module for auth UNIX users using MySQL data base
-Name:		pam_mysql
-Version:	0.7
-Release:	0.20.rc1
-Epoch:		1
-License:	GPLv2+
-Group:		System Environment/Base
-Source0:	http://dl.sf.net/pam-mysql/%{name}-%{version}RC1.tar.gz
-Patch0:		pam_mysql-0.7RC1-resps-segfault.patch
-Patch1:		pam_mysql-0.7RC1-first-pass.patch
-Patch2:		pam_mysql-0.7RC1-scrambled.patch
-URL:		http://sf.net/projects/pam-mysql/
+Summary:  PAM module for auth UNIX users using MySQL data base
+Name:     pam_mysql
+Version:  0.7
+Release:  0.20.rc1%{?dist}
+Epoch:    1
+License:  GPLv2+
+Group:    System Environment/Base
+Source0:  http://dl.sf.net/pam-mysql/%{name}-%{version}RC1.tar.gz
+Patch0:   pam_mysql-0.7RC1-resps-segfault.patch
+Patch1:   pam_mysql-0.7RC1-first-pass.patch
+Patch2:   pam_mysql-0.7RC1-scrambled.patch
+URL:      http://sf.net/projects/pam-mysql/
 BuildRequires:  pam-devel mysql-devel cyrus-sasl-devel pkgconfig openssl-devel
 BuildRequires:  autoconf automake libtool
 Requires:	pam
