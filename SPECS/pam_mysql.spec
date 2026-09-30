@@ -9,8 +9,14 @@ Source0:  http://dl.sf.net/pam-mysql/%{name}-%{version}RC1.tar.gz
 Patch0:   pam_mysql-0.7RC1-resps-segfault.patch
 Patch1:   pam_mysql-0.7RC1-first-pass.patch
 Patch2:   pam_mysql-0.7RC1-scrambled.patch
+Patch3:   pam_mysql-0.7RC1-pam-const-checks.patch
 URL:      http://sf.net/projects/pam-mysql/
-BuildRequires:  pam-devel mysql-devel cyrus-sasl-devel pkgconfig openssl-devel
+BuildRequires:  pam-devel cyrus-sasl-devel pkgconfig openssl-devel
+%if 0%{?rhel} >= 10
+BuildRequires:  mariadb-connector-c-devel
+%else
+BuildRequires:  mysql-devel
+%endif
 BuildRequires:  autoconf automake libtool
 Requires:	pam
 
@@ -22,9 +28,10 @@ users against an MySQL database.
 
 %prep
 %setup -q -n %{name}-%{version}RC1
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
+%patch -P 0 -p1
+%patch -P 1 -p1
+%patch -P 2 -p1
+%patch -P 3 -p1
 mv CREDITS AUTHORS
 autoreconf -fiv
 

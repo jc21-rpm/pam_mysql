@@ -1,0 +1,54 @@
+--- pam_mysql-0.7RC1.orig/acinclude.m4	2026-09-30 12:21:02.705522986 +1000
++++ pam_mysql-0.7RC1/acinclude.m4	2026-09-30 12:21:02.713787859 +1000
+@@ -24,9 +24,10 @@
+   AC_TRY_COMPILE([
+ #include <pam_appl.h>
+ #include <pam_modules.h>
++extern pam_handle_t *pam_mysql_test_pamh;
+   ], [
+     const char *user;
+-    pam_get_user((void*)0, &user, (void*)0);
++    pam_get_user(pam_mysql_test_pamh, &user, (void*)0);
+   ], [
+     AC_MSG_RESULT([yes])
+     AC_DEFINE([PAM_GET_USER_CONST], [const], [Define to `const' if the 2nd arg of pam_get_user() takes const pointer])
+@@ -39,9 +40,10 @@
+   AC_TRY_COMPILE([
+ #include <pam_appl.h>
+ #include <pam_modules.h>
++extern pam_handle_t *pam_mysql_test_pamh;
+   ], [
+     const void *data;
+-    pam_get_data((void*)0, (void*)0, &data);
++    pam_get_data(pam_mysql_test_pamh, "x", &data);
+   ], [
+     AC_MSG_RESULT([yes])
+     AC_DEFINE([PAM_GET_DATA_CONST], [const], [Define to `const' if the 2nd arg of pam_get_data() takes const pointer])
+@@ -54,9 +56,10 @@
+   AC_TRY_COMPILE([
+ #include <pam_appl.h>
+ #include <pam_modules.h>
++extern pam_handle_t *pam_mysql_test_pamh;
+   ], [
+     const void *item;
+-    pam_get_item((void*)0, 0, &item);
++    pam_get_item(pam_mysql_test_pamh, 0, &item);
+   ], [
+     AC_MSG_RESULT([yes])
+     AC_DEFINE([PAM_GET_ITEM_CONST], [const], [Define to `const' if the 2nd arg of pam_get_item() takes const pointer])
+@@ -67,13 +70,14 @@
+ 
+   AC_MSG_CHECKING([if the second argument of pam_conv.conv() takes const pointer])
+   AC_TRY_COMPILE([
++#include <stddef.h>
+ #include <pam_appl.h>
+ #include <pam_modules.h>
+   ], [
+     int (*conv)(int num_msg, const struct pam_message **msg,
+         struct pam_response **resp, void *appdata_ptr) = NULL;
+     struct pam_conv c = { conv, NULL };
+-    c.conv = NULL;
++    return c.conv != NULL;
+   ], [
+     AC_MSG_RESULT(yes)
+     AC_DEFINE([PAM_CONV_CONST], [const], [Define to `const' if the 2nd arg of pam_conv.conv takes const pointer.])
